@@ -3,14 +3,13 @@
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QFormLayout, QGroupBox,
                              QComboBox, QSpinBox, QDoubleSpinBox, QLabel,
-                             QProgressBar, QPushButton, QRadioButton,
-                             QCheckBox)
+                             QProgressBar, QPushButton, QCheckBox)
 
 from panel import Panel
 from testing_panel import TestingPanel
 from error_linechart import ErrorLineChart
 from rbfn import RBFN
-# from ga import GA
+from pso import PSO
 
 
 class TrainingPanel(Panel):
@@ -73,6 +72,33 @@ class TrainingPanel(Panel):
         self.population_size.setValue(100)
         self.population_size.setStatusTip('The population size for the PSO.')
 
+        self.inertia_weight = QDoubleSpinBox()
+        self.inertia_weight.setRange(0.1, 5)
+        self.inertia_weight.setValue(1)
+        self.inertia_weight.setSingleStep(0.1)
+        self.inertia_weight.setStatusTip('The inertia weight of the velocity '
+                                         ' for each individual.')
+
+        self.cognitive_const_rand_upper = QDoubleSpinBox()
+        self.cognitive_const_rand_upper.setRange(0.5, 5)
+        self.cognitive_const_rand_upper.setValue(1)
+        self.cognitive_const_rand_upper.setSingleStep(0.1)
+        self.cognitive_const_rand_upper.setStatusTip(
+            'The random upper bound for cognitive accelerate constant.')
+
+        self.social_const_rand_upper = QDoubleSpinBox()
+        self.social_const_rand_upper.setRange(0.5, 5)
+        self.social_const_rand_upper.setValue(1)
+        self.social_const_rand_upper.setSingleStep(0.1)
+        self.social_const_rand_upper.setStatusTip(
+            'The random upper bound for social accelerate constant.')
+
+        self.v_max = QDoubleSpinBox()
+        self.v_max.setRange(0.5, 100)
+        self.v_max.setValue(10)
+        self.v_max.setSingleStep(1)
+        self.v_max.setStatusTip('The maximum of velocity for each individual.')
+
         self.nneuron = QSpinBox()
         self.nneuron.setRange(1, 1000)
         self.nneuron.setValue(6)
@@ -88,6 +114,12 @@ class TrainingPanel(Panel):
 
         inner_layout.addRow('Iterating Times:', self.iter_times)
         inner_layout.addRow('Population Size:', self.population_size)
+        inner_layout.addRow('Inertia Weight:', self.inertia_weight)
+        inner_layout.addRow('Cognitive Const Upper:',
+                            self.cognitive_const_rand_upper)
+        inner_layout.addRow('Social Const Upper:',
+                            self.social_const_rand_upper)
+        inner_layout.addRow('Maximum of Velocity:', self.v_max)
         inner_layout.addRow('Number of Neuron:', self.nneuron)
         inner_layout.addRow('Maximum of SD:', self.sd_max)
 
@@ -156,12 +188,10 @@ class TrainingPanel(Panel):
         self.data_selector.setDisabled(True)
         self.iter_times.setDisabled(True)
         self.population_size.setDisabled(True)
-        self.score_amplifier.setDisabled(True)
-        self.roulette_wheel_selection.setDisabled(True)
-        self.tournament_selection.setDisabled(True)
-        self.p_crossover.setDisabled(True)
-        self.p_mutation.setDisabled(True)
-        self.mutation_scale.setDisabled(True)
+        self.inertia_weight.setDisabled(True)
+        self.cognitive_const_rand_upper.setDisabled(True)
+        self.social_const_rand_upper.setDisabled(True)
+        self.v_max.setDisabled(True)
         self.nneuron.setDisabled(True)
         self.sd_max.setDisabled(True)
         self.err_chart.clear()
@@ -176,12 +206,10 @@ class TrainingPanel(Panel):
         self.data_selector.setEnabled(True)
         self.iter_times.setEnabled(True)
         self.population_size.setEnabled(True)
-        self.score_amplifier.setEnabled(True)
-        self.roulette_wheel_selection.setEnabled(True)
-        self.tournament_selection.setEnabled(True)
-        self.p_crossover.setEnabled(True)
-        self.p_mutation.setEnabled(True)
-        self.mutation_scale.setEnabled(True)
+        self.inertia_weight.setEnabled(True)
+        self.cognitive_const_rand_upper.setEnabled(True)
+        self.social_const_rand_upper.setEnabled(True)
+        self.v_max.setEnabled(True)
         self.nneuron.setEnabled(True)
         self.sd_max.setEnabled(True)
 
@@ -210,24 +238,20 @@ class TrainingPanel(Panel):
 
         self.__current_dataset = self.datasets[self.data_selector.currentText(
         )]
-        mean_range = (min(min(d.i) for d in self.__current_dataset),
-                      max(max(d.i) for d in self.__current_dataset))
 
-        rbfn = RBFN(self.nneuron.value(), mean_range, self.sd_max.value())
-
-        # self.__ga = GA(self.iter_times.value(), self.population_size.value(),
-        #                reproduction_method,
-        #                self.p_crossover.value(), self.p_mutation.value(),
-        #                self.mutation_scale.value(), rbfn,
-        #                self.__current_dataset, mean_range, self.sd_max.value(),
-        #                score_amplifier=self.score_amplifier.value(),
-        #                is_multicore=self.multicore_cb.isChecked())
-        # self.stop_btn.clicked.connect(self.__ga.stop)
-        # self.__ga.started.connect(self.__init_widgets)
-        # self.__ga.finished.connect(self.__reset_widgets)
-        # self.__ga.sig_current_iter_time.connect(self.__show_current_iter_time)
-        # self.__ga.sig_current_error.connect(self.__show_current_error)
-        # self.__ga.sig_iter_error.connect(self.__show_iter_error)
-        # self.__ga.sig_console.connect(self.testing_panel.print_console)
-        # self.__ga.sig_rbfn.connect(self.testing_panel.load_rbfn)
-        # self.__ga.start()
+        self.__pso = PSO(self.iter_times.value(), self.population_size.value(),
+                         self.inertia_weight.value(),
+                         self.cognitive_const_rand_upper.value(),
+                         self.social_const_rand_upper.value(),
+                         self.v_max.value(), self.nneuron.value(),
+                         self.__current_dataset, self.sd_max.value(),
+                         is_multicore=self.multicore_cb.isChecked())
+        self.stop_btn.clicked.connect(self.__pso.stop)
+        self.__pso.started.connect(self.__init_widgets)
+        self.__pso.finished.connect(self.__reset_widgets)
+        self.__pso.sig_current_iter_time.connect(self.__show_current_iter_time)
+        self.__pso.sig_current_error.connect(self.__show_current_error)
+        self.__pso.sig_iter_error.connect(self.__show_iter_error)
+        self.__pso.sig_console.connect(self.testing_panel.print_console)
+        self.__pso.sig_rbfn.connect(self.testing_panel.load_rbfn)
+        self.__pso.start()
