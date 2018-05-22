@@ -1,4 +1,8 @@
+import copy
+import random
 import multiprocessing as mp
+import operator
+import time
 
 from PyQt5.QtCore import QThread, pyqtSlot, pyqtSignal
 
@@ -10,7 +14,7 @@ class PSO(QThread):
     sig_console = pyqtSignal(str)
     sig_current_iter_time = pyqtSignal(int)
     sig_current_error = pyqtSignal(float)
-    sig_iter_error = pyqtSignal(float, float)
+    sig_iter_error = pyqtSignal(float, float, float)
     sig_rbfn = pyqtSignal(RBFN)
 
     def __init__(self, iter_times, population_size, inertia_weight,
@@ -28,15 +32,42 @@ class PSO(QThread):
 
         self.population = [Individual(self.dataset, nneuron, v_max, sd_max)
                            for _ in range(self.population_size)]
+        self.rbfn = RBFN(nneuron, (0, 40), sd_max)
 
     def run(self):
+        total_best = copy.deepcopy(self.population[0])
         for i in range(self.iter_times):
             if self.abort:
                 break
             self.sig_current_iter_time.emit(i)
 
-            best = self.__get_best_individual()
-            print(best.fitness, best.best_fitness, best.best_position)
+            # get the best individual in current iteration
+            global_best = self.__get_best_individual()
+
+            # save the best individual in whole training
+            total_best = copy.deepcopy(
+                min((total_best, global_best), key=operator.attrgetter('err')))
+            self.__show_errs(global_best, total_best)
+
+            # update the position and velocity for each individual
+            for indiv in self.population:
+                indiv.update_position(self.inertia_weight,
+                                      random.uniform(
+                                          0, self.cognitive_const_upper),
+                                      random.uniform(
+                                          0, self.social_const_upper),
+                                      global_best.position)
+
+        self.sig_console.emit('Selecting the best individual...')
+        global_best = self.__get_best_individual()
+        total_best = copy.deepcopy(
+            min((total_best, global_best), key=operator.attrgetter('err')))
+        self.__show_errs(global_best, total_best)
+        self.sig_console.emit('The least error: %f' % total_best.err)
+        self.sig_console.emit(
+            'The best individual: \n{}'.format(total_best.position))
+        self.rbfn.load_model(total_best.position)
+        self.sig_rbfn.emit(self.rbfn)
 
     @pyqtSlot()
     def stop(self):
@@ -48,6 +79,7 @@ class PSO(QThread):
         self.abort = True
 
     def __get_best_individual(self):
+        """Update every individual's fitness and return the best individual."""
         if self.is_multicore:
             with mp.Pool() as pool:
                 res = pool.map(get_indiv_fitness_update, self.population)
@@ -55,6 +87,14 @@ class PSO(QThread):
                     indiv.fitness = result
             return max(self.population, key=lambda indiv: indiv.fitness)
         return max(self.population, key=lambda indiv: indiv.update_fitness())
+
+    def __show_errs(self, global_best, total_best):
+        for indiv in self.population:
+            time.sleep(0.001)
+            self.sig_current_error.emit(indiv.err)
+        self.sig_iter_error.emit(
+            sum(i.err for i in self.population) / len(self.population),
+            global_best.err, total_best.err)
 
 
 def get_indiv_fitness_update(indiv):

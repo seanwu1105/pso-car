@@ -133,13 +133,15 @@ class TrainingPanel(Panel):
         self.current_iter_time = QLabel('--')
         self.current_error = QLabel('--')
         self.avg_error = QLabel('--')
-        self.least_error = QLabel('--')
+        self.global_best_error = QLabel('--')
+        self.total_best_error = QLabel('--')
         self.progressbar = QProgressBar()
 
         self.current_iter_time.setAlignment(Qt.AlignCenter)
         self.current_error.setAlignment(Qt.AlignCenter)
         self.avg_error.setAlignment(Qt.AlignCenter)
-        self.least_error.setAlignment(Qt.AlignCenter)
+        self.global_best_error.setAlignment(Qt.AlignCenter)
+        self.total_best_error.setAlignment(Qt.AlignCenter)
 
         self.current_iter_time.setStatusTip('The current iterating time of '
                                             'the PSO.')
@@ -147,13 +149,18 @@ class TrainingPanel(Panel):
                                         'function.')
         self.avg_error.setStatusTip('The average error from the fitting '
                                     'function in current iteration.')
-        self.least_error.setStatusTip('The least error from the fitting '
-                                      'function in training.')
+        self.global_best_error.setStatusTip(
+            'The error of global best individual from the fitting function in '
+            'current iteration.')
+        self.total_best_error.setStatusTip(
+            'The error of total best individual from the fitting function in '
+            'training.')
 
         inner_layout.addRow('Current Iterating Time:', self.current_iter_time)
         inner_layout.addRow('Current Error:', self.current_error)
         inner_layout.addRow('Average Error:', self.avg_error)
-        inner_layout.addRow('Least Error:', self.least_error)
+        inner_layout.addRow('Global Best Error:', self.global_best_error)
+        inner_layout.addRow('Total Best Error:', self.total_best_error)
         inner_layout.addRow(self.progressbar)
 
         self._layout.addWidget(group_box)
@@ -168,7 +175,8 @@ class TrainingPanel(Panel):
                                     'of the PSO for each data.')
         self.__err_x = 1
 
-        self.iter_err_chart = ErrorLineChart(2, ('Avg', 'Least'))
+        self.iter_err_chart = ErrorLineChart(
+            3, ('Avg', 'Global Best', 'Total Best'))
         self.iter_err_chart.setStatusTip('The history of average and least '
                                          'error from the fitting of the PSO '
                                          'for each iteration.')
@@ -224,20 +232,23 @@ class TrainingPanel(Panel):
         self.err_chart.append_point(self.__err_x, value)
         self.__err_x += 1
 
-    @pyqtSlot(float, float)
-    def __show_iter_error(self, avg, least):
+    @pyqtSlot(float, float, float)
+    def __show_iter_error(self, avg, glob, total):
         self.avg_error.setText('{:.7f}'.format(avg))
-        self.least_error.setText('{:.7f}'.format(least))
+        self.global_best_error.setText('{:.7f}'.format(glob))
+        self.total_best_error.setText('{:.7f}'.format(total))
         self.iter_err_chart.append_point(
-            int(self.current_iter_time.text()), least, 1)
+            int(self.current_iter_time.text()), total, 2)
+        self.iter_err_chart.append_point(
+            int(self.current_iter_time.text()), glob, 1)
         self.iter_err_chart.append_point(
             int(self.current_iter_time.text()), avg, 0)
 
     def __run(self):
         self.progressbar.setMaximum(self.iter_times.value())
 
-        self.__current_dataset = self.datasets[self.data_selector.currentText(
-        )]
+        self.__current_dataset = self.datasets[
+            self.data_selector.currentText()]
 
         self.__pso = PSO(self.iter_times.value(), self.population_size.value(),
                          self.inertia_weight.value(),

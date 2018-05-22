@@ -83,6 +83,14 @@ class Individual(object):
 
         return self.__fitness
 
+    def update_position(self, inertia_weight, cognitive_const,
+                        social_const, global_best_position):
+        self.velocity = inertia_weight * self.velocity + \
+            cognitive_const * (self.best_position - self.position) + \
+            social_const * (global_best_position - self.position)
+        np.clip(self.velocity, -self.v_max, self.v_max, out=self.velocity)
+        self.position += self.velocity
+
     def __update_best(self):
         if self.__fitness > self.best_fitness:
             self.best_fitness = self.__fitness
