@@ -2,6 +2,8 @@
 
 A sandbox practice for the particle swarm optimization.
 
+![preview](https://i.imgur.com/tFWTts2.gif)
+
 ## Objective
 
 Use PSO to find the best the RBFN parameters, which input is the distances detected from car radar and output is the angle of wheel.
@@ -15,6 +17,28 @@ err = (1 / N) * sum(abs(d.expected_output - RBFN(d.input)) for d in training_dat
 ```
 
 `N` is the total number of training data.
+
+On the other word, we want to maximize the fitness value (`1 / err` ).
+
+## PSO Position and Velocity Update Formula
+
+The position and velocity for each individual in population of PSO is updated by following formula.
+
+* Velocity
+
+``` python
+self.velocity = inertia_weight * self.velocity + \
+    cognitive_const * (self.best_position - self.position) + \
+    social_const * (global_best_position - self.position)
+
+# limit the velocity
+np.clip(self.velocity, -self.v_max, self.v_max, out=self.velocity)
+
+self.position += self.velocity
+
+# limit the position to fit the range of RBFN parameters
+rbfn_params_limiter(self.position)
+```
 
 ## Installation
 

@@ -64,31 +64,31 @@ class TrainingPanel(Panel):
 
         self.iter_times = QSpinBox()
         self.iter_times.setRange(1, 1000000)
-        self.iter_times.setValue(300)
+        self.iter_times.setValue(200)
         self.iter_times.setStatusTip('The total iterating times for training.')
 
         self.population_size = QSpinBox()
-        self.population_size.setRange(1, 100000000)
+        self.population_size.setRange(1, 100000)
         self.population_size.setValue(100)
         self.population_size.setStatusTip('The population size for the PSO.')
 
         self.inertia_weight = QDoubleSpinBox()
-        self.inertia_weight.setRange(0.1, 5)
+        self.inertia_weight.setRange(0.1, 50)
         self.inertia_weight.setValue(1)
         self.inertia_weight.setSingleStep(0.1)
         self.inertia_weight.setStatusTip('The inertia weight of the velocity '
                                          ' for each individual.')
 
         self.cognitive_const_rand_upper = QDoubleSpinBox()
-        self.cognitive_const_rand_upper.setRange(0.5, 5)
-        self.cognitive_const_rand_upper.setValue(1)
+        self.cognitive_const_rand_upper.setRange(0.5, 50)
+        self.cognitive_const_rand_upper.setValue(2)
         self.cognitive_const_rand_upper.setSingleStep(0.1)
         self.cognitive_const_rand_upper.setStatusTip(
             'The random upper bound for cognitive accelerate constant.')
 
         self.social_const_rand_upper = QDoubleSpinBox()
-        self.social_const_rand_upper.setRange(0.5, 5)
-        self.social_const_rand_upper.setValue(1)
+        self.social_const_rand_upper.setRange(0.5, 50)
+        self.social_const_rand_upper.setValue(3)
         self.social_const_rand_upper.setSingleStep(0.1)
         self.social_const_rand_upper.setStatusTip(
             'The random upper bound for social accelerate constant.')
@@ -100,7 +100,7 @@ class TrainingPanel(Panel):
         self.v_max.setStatusTip('The maximum of velocity for each individual.')
 
         self.nneuron = QSpinBox()
-        self.nneuron.setRange(1, 1000)
+        self.nneuron.setRange(1, 100)
         self.nneuron.setValue(6)
         self.nneuron.setStatusTip('The number of RBFN neuron.')
 

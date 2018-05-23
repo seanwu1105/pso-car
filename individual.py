@@ -88,8 +88,19 @@ class Individual(object):
         self.velocity = inertia_weight * self.velocity + \
             cognitive_const * (self.best_position - self.position) + \
             social_const * (global_best_position - self.position)
+
+        # limit the velocity
         np.clip(self.velocity, -self.v_max, self.v_max, out=self.velocity)
+
         self.position += self.velocity
+
+        # limit the position
+        np.clip(self.position[:self.nneuron + 1], -1,
+                1, out=self.position[:(self.nneuron + 1)])
+        np.clip(self.position[(self.nneuron + 1):-self.nneuron], *
+                self.mean_range, out=self.position[(self.nneuron + 1):-self.nneuron])
+        np.clip(self.position[-self.nneuron:], 0.001,
+                None, out=self.position[-self.nneuron:])
 
     def __update_best(self):
         if self.__fitness > self.best_fitness:
