@@ -50,6 +50,10 @@ git clone https://gitlab.com/GLaDOS1105/pso-car.git
 
 2. Change directory to the root of the project
 
+```
+cd pso-car/
+```
+
 3. Run with Python interpreter
 
 ```

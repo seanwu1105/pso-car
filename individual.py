@@ -1,6 +1,6 @@
 """
 Define the individual for PSO.
-Note: The initialization for each individual is especailly designed for RBFN
+Note: The initialization for each individual is especially designed for RBFN
       parameters.
 """
 
@@ -61,13 +61,6 @@ class Individual(object):
 
     def update_fitness(self):
         """Calculate the fitness and error for this individual.
-
-        Args:
-            individual (list of floats): The individual which is the parameters
-                of RBFN model.
-            dataset (list of TrainingData): The training dataset.
-            rbfn (RBFN): The RBFN model which must be deep copied for different
-                parameters in output calculation.
 
         Returns:
             float: The result of fitting function.
