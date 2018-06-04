@@ -15,6 +15,7 @@ class PSO(QThread):
     sig_current_iter_time = pyqtSignal(int)
     sig_current_error = pyqtSignal(float)
     sig_iter_error = pyqtSignal(float, float, float)
+    sig_indicate_busy = pyqtSignal()
     sig_rbfn = pyqtSignal(RBFN)
 
     def __init__(self, iter_times, population_size, inertia_weight,
@@ -57,7 +58,7 @@ class PSO(QThread):
                                       random.uniform(
                                           0, self.social_const_upper),
                                       global_best.position)
-
+        self.sig_indicate_busy.emit()
         self.sig_console.emit('Selecting the best individual...')
         global_best = self.__get_best_individual()
         total_best = copy.deepcopy(

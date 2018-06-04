@@ -73,21 +73,21 @@ class TrainingPanel(Panel):
         self.population_size.setStatusTip('The population size for the PSO.')
 
         self.inertia_weight = QDoubleSpinBox()
-        self.inertia_weight.setRange(0.1, 50)
+        self.inertia_weight.setRange(0, 50)
         self.inertia_weight.setValue(1)
         self.inertia_weight.setSingleStep(0.1)
         self.inertia_weight.setStatusTip('The inertia weight of the velocity '
                                          ' for each individual.')
 
         self.cognitive_const_rand_upper = QDoubleSpinBox()
-        self.cognitive_const_rand_upper.setRange(0.5, 50)
+        self.cognitive_const_rand_upper.setRange(0, 50)
         self.cognitive_const_rand_upper.setValue(2)
         self.cognitive_const_rand_upper.setSingleStep(0.1)
         self.cognitive_const_rand_upper.setStatusTip(
             'The random upper bound for cognitive accelerate constant.')
 
         self.social_const_rand_upper = QDoubleSpinBox()
-        self.social_const_rand_upper.setRange(0.5, 50)
+        self.social_const_rand_upper.setRange(0, 50)
         self.social_const_rand_upper.setValue(3)
         self.social_const_rand_upper.setSingleStep(0.1)
         self.social_const_rand_upper.setStatusTip(
@@ -95,7 +95,7 @@ class TrainingPanel(Panel):
 
         self.v_max = QDoubleSpinBox()
         self.v_max.setRange(0.5, 100)
-        self.v_max.setValue(10)
+        self.v_max.setValue(5)
         self.v_max.setSingleStep(1)
         self.v_max.setStatusTip('The maximum of velocity for each individual.')
 
@@ -146,15 +146,16 @@ class TrainingPanel(Panel):
         self.current_iter_time.setStatusTip('The current iterating time of '
                                             'the PSO.')
         self.current_error.setStatusTip('The current error from the fitting '
-                                        'function.')
+                                        'function. ("( )": normalized error)')
         self.avg_error.setStatusTip('The average error from the fitting '
-                                    'function in current iteration.')
+                                    'function in current iteration.  ("( )": '
+                                    'normalized error)')
         self.global_best_error.setStatusTip(
             'The error of global best individual from the fitting function in '
-            'current iteration.')
+            'current iteration.  ("( )": normalized error)')
         self.total_best_error.setStatusTip(
             'The error of total best individual from the fitting function in '
-            'training.')
+            'training.  ("( )": normalized error)')
 
         inner_layout.addRow('Current Iterating Time:', self.current_iter_time)
         inner_layout.addRow('Current Error:', self.current_error)
@@ -220,6 +221,13 @@ class TrainingPanel(Panel):
         self.v_max.setEnabled(True)
         self.nneuron.setEnabled(True)
         self.sd_max.setEnabled(True)
+        self.progressbar.setMinimum(0)
+        self.progressbar.setMaximum(100)
+
+    @pyqtSlot()
+    def __indicate_busy(self):
+        self.progressbar.setMinimum(0)
+        self.progressbar.setMaximum(0)
 
     @pyqtSlot(int)
     def __show_current_iter_time(self, value):
@@ -228,15 +236,17 @@ class TrainingPanel(Panel):
 
     @pyqtSlot(float)
     def __show_current_error(self, value):
-        self.current_error.setText('{:.7f}'.format(value))
+        self.current_error.setText('{:.5f} ({:.5f})'.format(value, value / 40))
         self.err_chart.append_point(self.__err_x, value)
         self.__err_x += 1
 
     @pyqtSlot(float, float, float)
     def __show_iter_error(self, avg, glob, total):
-        self.avg_error.setText('{:.7f}'.format(avg))
-        self.global_best_error.setText('{:.7f}'.format(glob))
-        self.total_best_error.setText('{:.7f}'.format(total))
+        self.avg_error.setText('{:.5f} ({:.5f})'.format(avg, avg / 40))
+        self.global_best_error.setText(
+            '{:.5f} ({:.5f})'.format(glob, glob / 40))
+        self.total_best_error.setText(
+            '{:.5f} ({:.5f})'.format(total, total / 40))
         self.iter_err_chart.append_point(
             int(self.current_iter_time.text()), total, 2)
         self.iter_err_chart.append_point(
@@ -263,6 +273,7 @@ class TrainingPanel(Panel):
         self.__pso.sig_current_iter_time.connect(self.__show_current_iter_time)
         self.__pso.sig_current_error.connect(self.__show_current_error)
         self.__pso.sig_iter_error.connect(self.__show_iter_error)
+        self.__pso.sig_indicate_busy.connect(self.__indicate_busy)
         self.__pso.sig_console.connect(self.testing_panel.print_console)
         self.__pso.sig_rbfn.connect(self.testing_panel.load_rbfn)
         self.__pso.start()
