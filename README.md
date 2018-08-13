@@ -123,8 +123,8 @@ pip3 install matplotlib
 pip3 install pyqt5
 ```
 
-* [PyQtChart5](https://www.riverbankcomputing.com/software/pyqtchart/intro)
+* [PySide2](http://wiki.qt.io/Qt_for_Python)
 
 ``` bash
-pip3 install PyQtChart
+pip3 install pyside2
 ```

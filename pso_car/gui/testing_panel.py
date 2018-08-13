@@ -1,8 +1,8 @@
 """ Define the contents of testing panel. """
 
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtWidgets import (QHBoxLayout, QFormLayout, QGroupBox, QComboBox,
-                             QPushButton, QLabel, QTextEdit, QSpinBox)
+from PySide2.QtCore import Qt, Slot
+from PySide2.QtWidgets import (QHBoxLayout, QFormLayout, QGroupBox, QComboBox,
+                               QPushButton, QLabel, QTextEdit, QSpinBox)
 
 from pso_car.gui.panel import Panel
 from pso_car.gui.car_simulator_plot import CarSimulatorPlot
@@ -29,12 +29,13 @@ class TestingPanel(Panel):
         group_box.setLayout(inner_layout)
 
         self.map_selector = QComboBox()
-        self.map_selector.addItems(self.maps.keys())
+        self.map_selector.addItems(list(self.maps.keys()))
         self.map_selector.setStatusTip('Select the training dataset.')
         self.map_selector.currentIndexChanged.connect(self.__change_map)
 
         self.start_btn = QPushButton('Test')
-        self.start_btn.setStatusTip('Start testing. (available after training)')
+        self.start_btn.setStatusTip(
+            'Start testing. (available after training)')
         self.start_btn.setDisabled(True)
         self.start_btn.clicked.connect(self.__run)
 
@@ -98,39 +99,39 @@ class TestingPanel(Panel):
         self.__console.setStatusTip("Show the logs of status changing.")
         self._layout.addWidget(self.__console)
 
-    @pyqtSlot()
+    @Slot()
     def __init_widgets(self):
         self.start_btn.setDisabled(True)
         self.stop_btn.setEnabled(True)
         self.fps.setDisabled(True)
         self.map_selector.setDisabled(True)
 
-    @pyqtSlot()
+    @Slot()
     def __reset_widgets(self):
         self.start_btn.setEnabled(True)
         self.stop_btn.setDisabled(True)
         self.fps.setEnabled(True)
         self.map_selector.setEnabled(True)
 
-    @pyqtSlot(str)
+    @Slot(str)
     def print_console(self, text):
         self.__console.append(text)
 
-    @pyqtSlot(list, list, list)
+    @Slot(list, list, list)
     def __show_dists(self, pos, intersections, dists):
         self.simulator.paint_dist(pos, intersections)
         self.dist_front.setText(str(dists[0]))
         self.dist_left.setText(str(dists[1]))
         self.dist_right.setText(str(dists[2]))
 
-    @pyqtSlot()
+    @Slot()
     def __show_car_collided(self):
         self.simulator.paint_car_collided()
 
     def __show_path(self, xdata, ydata):
         self.simulator.paint_path(xdata, ydata)
 
-    @pyqtSlot()
+    @Slot()
     def __change_map(self):
         self.__current_map = self.maps[self.map_selector.currentText()]
         self.__car = Car(self.__current_map['start_pos'],
@@ -142,20 +143,20 @@ class TestingPanel(Panel):
         self.__show_dists(self.__current_map['start_pos'],
                           [self.__current_map['start_pos']] * 3, ['--'] * 3)
 
-    @pyqtSlot(list, float, float)
+    @Slot(list, float, float)
     def __move_car(self, pos, angle, wheel_angle=0.0):
         self.simulator.paint_car(pos, angle)
         self.car_position.setText("({:.7f}, {:.7f})".format(*pos))
         self.car_angle.setText(str(angle))
         self.wheel_angle.setText(str(wheel_angle))
 
-    @pyqtSlot(RBFN)
+    @Slot(RBFN)
     def load_rbfn(self, rbfn):
         self.rbfn = rbfn
         self.print_console('New RBFN model has been loaded.')
         self.start_btn.setEnabled(True)
 
-    @pyqtSlot()
+    @Slot()
     def __run(self):
         # reset the map
         self.__change_map()
@@ -176,7 +177,8 @@ class TestingPanel(Panel):
         self.__thread.sig_results.connect(self.__get_results)
         self.__thread.start()
 
-    @pyqtSlot(list)
+    @Slot(list)
     def __get_results(self, results):
         """Get the results of last running and draw the path of it."""
-        self.simulator.paint_path([d['x'] for d in results], [d['y'] for d in results])
+        self.simulator.paint_path([d['x'] for d in results], [
+                                  d['y'] for d in results])

@@ -14,7 +14,7 @@ import multiprocessing
 import pathlib
 import sys
 
-from PyQt5.QtWidgets import QApplication
+from PySide2.QtWidgets import QApplication
 
 from pso_car.gui import gui_base
 

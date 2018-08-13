@@ -1,6 +1,6 @@
 """ Define the GUI: main window. """
 
-from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout
+from PySide2.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 
 from pso_car.gui.training_panel import TrainingPanel
 from pso_car.gui.testing_panel import TestingPanel
