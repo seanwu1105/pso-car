@@ -1,5 +1,7 @@
 # Car Control Simulator Based on Particle Swarm Optimization
 
+[![Requirements Status](https://requires.io/github/GLaDOS1105/pso-car/requirements.svg?branch=master)](https://requires.io/github/GLaDOS1105/pso-car/requirements/?branch=master)
+
 A sandbox practice for the particle swarm optimization.
 
 ![preview](https://i.imgur.com/tFWTts2.gif)
@@ -42,21 +44,21 @@ rbfn_params_limiter(self.position)
 
 ## Installation
 
-1. Download this project
+* Download this project
 
-```
+``` bash
 git clone https://gitlab.com/GLaDOS1105/pso-car.git
 ```
 
-2. Change directory to the root of the project
+* Change directory to the root of the project
 
-```
+``` bash
 cd pso-car/
 ```
 
-3. Run with Python interpreter
+* Run with Python interpreter
 
-```
+``` bash
 python3 main.py
 ```
 
@@ -105,24 +107,24 @@ Every coordinates between the fourth and last line are the corner point of the w
 
 * [numpy](http://www.numpy.org/)
 
-```
+``` bash
 pip3 install numpy
 ```
 
 * [matplotlib](https://matplotlib.org/)
 
-```
+``` bash
 pip3 install matplotlib
 ```
 
 * [PyQt5](https://riverbankcomputing.com/software/pyqt/intro)
 
-```
+``` bash
 pip3 install pyqt5
 ```
 
 * [PyQtChart5](https://www.riverbankcomputing.com/software/pyqtchart/intro)
 
-```
+``` bash
 pip3 install PyQtChart
 ```

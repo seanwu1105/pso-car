@@ -2,8 +2,8 @@
 
 from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 
-from training_panel import TrainingPanel
-from testing_panel import TestingPanel
+from pso_car.gui.training_panel import TrainingPanel
+from pso_car.gui.testing_panel import TestingPanel
 
 class GUIBase(QMainWindow):
     """ The base of GUI, containing the status bar and menu. """

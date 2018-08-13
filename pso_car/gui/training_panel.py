@@ -5,11 +5,11 @@ from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QFormLayout, QGroupBox,
                              QComboBox, QSpinBox, QDoubleSpinBox, QLabel,
                              QProgressBar, QPushButton, QCheckBox)
 
-from panel import Panel
-from testing_panel import TestingPanel
-from error_linechart import ErrorLineChart
-from rbfn import RBFN
-from pso import PSO
+from pso_car.gui.panel import Panel
+from pso_car.gui.testing_panel import TestingPanel
+from pso_car.gui.error_linechart import ErrorLineChart
+from pso_car.backend.rbfn import RBFN
+from pso_car.backend.pso import PSO
 
 
 class TrainingPanel(Panel):

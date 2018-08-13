@@ -16,7 +16,7 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
-import gui_base
+from pso_car.gui import gui_base
 
 
 TrainingData = collections.namedtuple('TrainingData', ['i', 'o'])
