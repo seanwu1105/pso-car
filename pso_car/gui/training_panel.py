@@ -14,7 +14,7 @@ from pso_car.backend.pso import PSO
 
 class TrainingPanel(Panel):
 
-    def __init__(self, datasets, testing_panel):
+    def __init__(self, datasets, testing_panel, threads):
         super().__init__()
         if isinstance(testing_panel, TestingPanel):
             self.testing_panel = testing_panel
@@ -22,6 +22,7 @@ class TrainingPanel(Panel):
             raise TypeError('"testing_panel" must be the instance of '
                             '"TestingPanel"')
         self.datasets = datasets
+        self.threads = threads
 
         self.__set_execution_ui()
         self.__set_options_ui()
@@ -267,6 +268,7 @@ class TrainingPanel(Panel):
                          self.v_max.value(), self.nneuron.value(),
                          self.__current_dataset, self.sd_max.value(),
                          is_multicore=self.multicore_cb.isChecked())
+        self.threads.append(self.__pso)
         self.stop_btn.clicked.connect(self.__pso.stop)
         self.__pso.started.connect(self.__init_widgets)
         self.__pso.finished.connect(self.__reset_widgets)

@@ -16,19 +16,10 @@ import sys
 
 from PySide2.QtWidgets import QApplication
 
-from pso_car.gui import gui_base
+from pso_car.gui import base
 
 
 TrainingData = collections.namedtuple('TrainingData', ['i', 'o'])
-
-
-def main():
-    """ Create GUI application and read files. """
-    sys.argv += ['--style', 'fusion']
-    app = QApplication(sys.argv)
-    window = gui_base.GUIBase(read_maps(), read_training_datasets())
-    window.show()
-    sys.exit(app.exec_())
 
 
 def read_maps(folderpath='maps'):
@@ -66,4 +57,13 @@ def read_training_datasets(folderpath='data'):
 
 if __name__ == '__main__':
     multiprocessing.freeze_support()
-    main()
+    sys.argv += ['--style', 'fusion']
+
+    # WARNING: QApplication and QMainWindow MUST stay in global scope for
+    #          multiprocessing (only PySide2 has such error).
+    #          More details:
+    #          https://forum.qt.io/topic/93693/pyside2-with-python3-built-in-multiprocessing
+    app = QApplication(sys.argv)
+    window = base.GUIBase(read_maps(), read_training_datasets())
+    window.show()
+    sys.exit(app.exec_())

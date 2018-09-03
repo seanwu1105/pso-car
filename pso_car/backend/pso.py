@@ -38,7 +38,6 @@ class PSO(QThread):
     def run(self):
         total_best = copy.deepcopy(self.population[0])
         for i in range(self.iter_times):
-            print('in')
             if self.abort:
                 break
             self.sig_current_iter_time.emit(i)
@@ -82,9 +81,7 @@ class PSO(QThread):
 
     def __get_best_individual(self):
         """Update every individual's fitness and return the best individual."""
-        # XXX: using multiprocessing with PySide2 will occur fatal error
-        # if self.is_multicore:
-        if False:
+        if self.is_multicore:
             with mp.Pool() as pool:
                 res = pool.map(get_indiv_fitness_update, self.population)
                 for indiv, result in zip(self.population, res):

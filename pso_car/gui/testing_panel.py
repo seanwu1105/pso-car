@@ -13,10 +13,11 @@ from pso_car.backend.rbfn import RBFN
 
 class TestingPanel(Panel):
 
-    def __init__(self, maps):
+    def __init__(self, maps, threads):
         super().__init__()
         self.maps = maps
         self.rbfn = None
+        self.threads = threads
 
         self.__set_execution_ui()
         self.__set_outputs_ui()
@@ -167,6 +168,7 @@ class TestingPanel(Panel):
                                (self.__current_map['end_area_lt'],
                                 self.__current_map['end_area_rb']),
                                self.fps.value())
+        self.threads.append(self.__thread)
         self.stop_btn.clicked.connect(self.__thread.stop)
         self.__thread.started.connect(self.__init_widgets)
         self.__thread.finished.connect(self.__reset_widgets)
