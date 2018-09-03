@@ -1,9 +1,9 @@
 """ Define the contents of training panel. """
 
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QFormLayout, QGroupBox,
-                             QComboBox, QSpinBox, QDoubleSpinBox, QLabel,
-                             QProgressBar, QPushButton, QCheckBox)
+from PySide2.QtCore import Qt, Slot
+from PySide2.QtWidgets import (QVBoxLayout, QHBoxLayout, QFormLayout, QGroupBox,
+                               QComboBox, QSpinBox, QDoubleSpinBox, QLabel,
+                               QProgressBar, QPushButton, QCheckBox)
 
 from pso_car.gui.panel import Panel
 from pso_car.gui.testing_panel import TestingPanel
@@ -14,7 +14,7 @@ from pso_car.backend.pso import PSO
 
 class TrainingPanel(Panel):
 
-    def __init__(self, datasets, testing_panel):
+    def __init__(self, datasets, testing_panel, threads):
         super().__init__()
         if isinstance(testing_panel, TestingPanel):
             self.testing_panel = testing_panel
@@ -22,6 +22,7 @@ class TrainingPanel(Panel):
             raise TypeError('"testing_panel" must be the instance of '
                             '"TestingPanel"')
         self.datasets = datasets
+        self.threads = threads
 
         self.__set_execution_ui()
         self.__set_options_ui()
@@ -34,7 +35,7 @@ class TrainingPanel(Panel):
         group_box.setLayout(inner_layout)
 
         self.data_selector = QComboBox()
-        self.data_selector.addItems(self.datasets.keys())
+        self.data_selector.addItems(list(self.datasets.keys()))
         self.data_selector.setStatusTip('Select the training dataset.')
 
         self.start_btn = QPushButton('Train')
@@ -189,7 +190,7 @@ class TrainingPanel(Panel):
         inner_layout.addWidget(self.iter_err_chart)
         self._layout.addWidget(group_box)
 
-    @pyqtSlot()
+    @Slot()
     def __init_widgets(self):
         self.start_btn.setDisabled(True)
         self.stop_btn.setEnabled(True)
@@ -207,7 +208,7 @@ class TrainingPanel(Panel):
         self.iter_err_chart.clear()
         self.__err_x = 1
 
-    @pyqtSlot()
+    @Slot()
     def __reset_widgets(self):
         self.start_btn.setEnabled(True)
         self.stop_btn.setDisabled(True)
@@ -224,23 +225,23 @@ class TrainingPanel(Panel):
         self.progressbar.setMinimum(0)
         self.progressbar.setMaximum(100)
 
-    @pyqtSlot()
+    @Slot()
     def __indicate_busy(self):
         self.progressbar.setMinimum(0)
         self.progressbar.setMaximum(0)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def __show_current_iter_time(self, value):
         self.current_iter_time.setText(str(value + 1))
         self.progressbar.setValue(value + 1)
 
-    @pyqtSlot(float)
+    @Slot(float)
     def __show_current_error(self, value):
         self.current_error.setText('{:.5f} ({:.5f})'.format(value, value / 40))
         self.err_chart.append_point(self.__err_x, value)
         self.__err_x += 1
 
-    @pyqtSlot(float, float, float)
+    @Slot(float, float, float)
     def __show_iter_error(self, avg, glob, total):
         self.avg_error.setText('{:.5f} ({:.5f})'.format(avg, avg / 40))
         self.global_best_error.setText(
@@ -267,6 +268,7 @@ class TrainingPanel(Panel):
                          self.v_max.value(), self.nneuron.value(),
                          self.__current_dataset, self.sd_max.value(),
                          is_multicore=self.multicore_cb.isChecked())
+        self.threads.append(self.__pso)
         self.stop_btn.clicked.connect(self.__pso.stop)
         self.__pso.started.connect(self.__init_widgets)
         self.__pso.finished.connect(self.__reset_widgets)

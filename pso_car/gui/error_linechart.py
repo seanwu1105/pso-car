@@ -1,6 +1,6 @@
-from PyQt5.QtGui import QPainter
-from PyQt5.QtWidgets import QVBoxLayout, QFrame
-from PyQt5.QtChart import QChart, QChartView, QLineSeries
+from PySide2.QtGui import QPainter
+from PySide2.QtWidgets import QVBoxLayout, QFrame
+from PySide2.QtCharts import QtCharts
 
 class ErrorLineChart(QFrame):
 
@@ -16,8 +16,8 @@ class ErrorLineChart(QFrame):
         self.setMinimumHeight(110)
         self.setMinimumWidth(400)
 
-        self.serieses = [QLineSeries() for _ in range(self.nseries)]
-        self.chart = QChart()
+        self.serieses = [QtCharts.QLineSeries() for _ in range(self.nseries)]
+        self.chart = QtCharts.QChart()
         if self.series_names is None:
             self.chart.legend().hide()
         for idx, series in enumerate(self.serieses):
@@ -28,7 +28,7 @@ class ErrorLineChart(QFrame):
         self.chart.layout().setContentsMargins(0, 0, 0, 0)
         # self.chart.setTheme(QChart.ChartThemeDark)
         self.chart.axisY().setTickCount(3)
-        chart_view = QChartView(self.chart)
+        chart_view = QtCharts.QChartView(self.chart)
         chart_view.setRenderHint(QPainter.Antialiasing)
         layout.addWidget(chart_view)
 
@@ -42,7 +42,7 @@ class ErrorLineChart(QFrame):
         if self.x_max > 100:
             self.chart.axisX().setRange(self.x_max - 100, self.x_max)
             y_max = max(self.y_pts[-100:])
-            self.serieses[series_idx].remove(self.x_max - 100, self.y_pts[self.x_max - 101])
+            self.serieses[series_idx].remove(float(self.x_max - 100), self.y_pts[self.x_max - 101])
         else:
             self.chart.axisX().setRange(1, self.x_max)
             y_max = max(self.y_pts)
@@ -50,7 +50,7 @@ class ErrorLineChart(QFrame):
 
     def clear(self):
         self.chart.removeAllSeries()
-        self.serieses = [QLineSeries() for _ in range(self.nseries)]
+        self.serieses = [QtCharts.QLineSeries() for _ in range(self.nseries)]
         for idx, series in enumerate(self.serieses):
             self.chart.addSeries(series)
             if self.series_names is not None:

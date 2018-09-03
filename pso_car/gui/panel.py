@@ -1,6 +1,6 @@
 """ The super class of all panels. """
 
-from PyQt5.QtWidgets import QVBoxLayout, QFrame
+from PySide2.QtWidgets import QVBoxLayout, QFrame
 
 class Panel(QFrame):
     def __init__(self):

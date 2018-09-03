@@ -4,19 +4,19 @@ import multiprocessing as mp
 import operator
 import time
 
-from PyQt5.QtCore import QThread, pyqtSlot, pyqtSignal
+from PySide2.QtCore import QThread, Slot, Signal
 
 from pso_car.backend.individual import Individual
 from pso_car.backend.rbfn import RBFN
 
 
 class PSO(QThread):
-    sig_console = pyqtSignal(str)
-    sig_current_iter_time = pyqtSignal(int)
-    sig_current_error = pyqtSignal(float)
-    sig_iter_error = pyqtSignal(float, float, float)
-    sig_indicate_busy = pyqtSignal()
-    sig_rbfn = pyqtSignal(RBFN)
+    sig_console = Signal(str)
+    sig_current_iter_time = Signal(int)
+    sig_current_error = Signal(float)
+    sig_iter_error = Signal(float, float, float)
+    sig_indicate_busy = Signal()
+    sig_rbfn = Signal(RBFN)
 
     def __init__(self, iter_times, population_size, inertia_weight,
                  cognitive_const_upper, social_const_upper, v_max, nneuron,
@@ -70,7 +70,7 @@ class PSO(QThread):
         self.rbfn.load_model(total_best.position)
         self.sig_rbfn.emit(self.rbfn)
 
-    @pyqtSlot()
+    @Slot()
     def stop(self):
         if self.isRunning():
             self.sig_console.emit(
