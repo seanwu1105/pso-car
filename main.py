@@ -16,7 +16,7 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
-from pso_car.gui import gui_base
+from pso_car.gui import base
 
 
 TrainingData = collections.namedtuple('TrainingData', ['i', 'o'])
@@ -26,7 +26,7 @@ def main():
     """ Create GUI application and read files. """
     sys.argv += ['--style', 'fusion']
     app = QApplication(sys.argv)
-    window = gui_base.GUIBase(read_maps(), read_training_datasets())
+    window = base.GUIBase(read_maps(), read_training_datasets())
     window.show()
     sys.exit(app.exec_())
 
