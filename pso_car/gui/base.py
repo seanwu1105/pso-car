@@ -2,8 +2,8 @@
 
 from PySide2.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 
-from pso_car.gui.training_panel import TrainingPanel
-from pso_car.gui.testing_panel import TestingPanel
+from .training_panel import TrainingPanel
+from .testing_panel import TestingPanel
 
 
 class GUIBase(QMainWindow):

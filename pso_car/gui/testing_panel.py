@@ -4,11 +4,11 @@ from PySide2.QtCore import Qt, Slot
 from PySide2.QtWidgets import (QHBoxLayout, QFormLayout, QGroupBox, QComboBox,
                                QPushButton, QLabel, QTextEdit, QSpinBox)
 
-from pso_car.gui.panel import Panel
-from pso_car.gui.car_simulator_plot import CarSimulatorPlot
-from pso_car.backend.car import Car
-from pso_car.backend.run import RunCar
-from pso_car.backend.rbfn import RBFN
+from .panel import Panel
+from .car_simulator_plot import CarSimulatorPlot
+from ..backend.car import Car
+from ..backend.run import RunCar
+from ..backend.rbfn import RBFN
 
 
 class TestingPanel(Panel):

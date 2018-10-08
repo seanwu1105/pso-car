@@ -7,7 +7,7 @@ Note: The initialization for each individual is especially designed for RBFN
 import math
 import numpy as np
 
-from pso_car.backend.rbfn import RBFN
+from .rbfn import RBFN
 
 
 class Individual(object):

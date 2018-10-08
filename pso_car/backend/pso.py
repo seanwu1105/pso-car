@@ -6,8 +6,8 @@ import time
 
 from PySide2.QtCore import QThread, Slot, Signal
 
-from pso_car.backend.individual import Individual
-from pso_car.backend.rbfn import RBFN
+from .individual import Individual
+from .rbfn import RBFN
 
 
 class PSO(QThread):
