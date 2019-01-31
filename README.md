@@ -47,7 +47,7 @@ rbfn_params_limiter(self.position)
 * Download this project
 
 ``` bash
-git clone https://gitlab.com/GLaDOS1105/pso-car.git
+git clone https://gitlab.com/seanwu1105/pso-car.git
 ```
 
 * Change directory to the root of the project
