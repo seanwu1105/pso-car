@@ -1,6 +1,6 @@
 # Car Control Simulator Based on Particle Swarm Optimization
 
-[![Requirements Status](https://requires.io/github/GLaDOS1105/pso-car/requirements.svg?branch=master)](https://requires.io/github/GLaDOS1105/pso-car/requirements/?branch=master)
+[![Requirements Status](https://requires.io/github/seanwu1105/pso-car/requirements.svg?branch=master)](https://requires.io/github/seanwu1105/pso-car/requirements/?branch=master)
 
 A sandbox practice for the particle swarm optimization.
 
